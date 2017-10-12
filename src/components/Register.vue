@@ -3,11 +3,11 @@
 		<div class="columns">
 			<div class="column">&nbsp;</div>
 			<div class="column">
-				<h2 class="title">Login</h2>
+				<h2 class="title">Register</h2>
 				<div class="field">
 				  <p class="control has-icons-left has-icons-right">
-				    <input class="input" type="email" name="email" placeholder="Email" v-model="email" :class="{'input': true, 'is-danger': errors.has('email') }" v-validate="'required|email'">
-            <span v-show="errors.has('email')" class="help is-danger"><i class="fa fa-warning"></i>&nbsp;{{ errors.first('email') }}</span>
+				    <input class="input" type="email" name="email" placeholder="Email" v-model="email" v-validate="'required|email'">
+            <span v-show="errors.has('email') && showErrors" class="help is-danger"><i class="fa fa-warning"></i>&nbsp;{{ errors.first('email') }}</span>
 				    <span class="icon is-small is-left">
 				      <i class="fa fa-envelope"></i>
 				    </span>
@@ -16,10 +16,20 @@
 				    </span>
 				  </p>
 				</div>
+				<br />
 				<div class="field">
 				  <p class="control has-icons-left">
-				    <input class="input" type="password" name="password" placeholder="Password" v-model="password" v-validate="'required'" v-on:keyup.enter="validateBeforeSubmit">
-				    <span v-show="errors.has('password')" class="help is-danger"><i class="fa fa-warning"></i>&nbsp;{{ errors.first('password') }}</span>
+				    <input class="input" type="password" name="password" placeholder="Password" v-model="password" v-validate="'required|confirmed:passconfirm'">
+				    <span v-show="errors.has('password') && showErrors" class="help is-danger"><i class="fa fa-warning"></i>&nbsp;{{ errors.first('password') }}</span>
+				    <span class="icon is-small is-left">
+				      <i class="fa fa-lock"></i>
+				    </span>
+				  </p>
+				</div>
+				<div class="field">
+				  <p class="control has-icons-left">
+				    <input class="input" type="password" name="passconfirm" placeholder="Confirm Password" v-model="passconfirm" v-validate="'required'">
+				    <span v-show="errors.has('passconfirm') && showErrors" class="help is-danger"><i class="fa fa-warning"></i>&nbsp;{{ errors.first('passconfirm') }}</span>
 				    <span class="icon is-small is-left">
 				      <i class="fa fa-lock"></i>
 				    </span>
@@ -28,7 +38,7 @@
 				<div class="field">
 				  <p class="control is-pulled-right">
 				    <button class="button is-info" v-on:click="validateBeforeSubmit">
-				      Login
+				      Register
 				    </button>
 				  </p>
 				</div>
@@ -41,32 +51,27 @@
 	import Vue from 'vue'
 	import VeeValidate from 'vee-validate' 
 	import axios from 'axios'
-	import VueLocalStorage from 'vue-localstorage'
-	Vue.use(VueLocalStorage,{name: 'ls'})
 
-	// must be last use statement?
- 	Vue.use(VeeValidate)
-	
+	Vue.use(VeeValidate)
 
 	export default {
-		name: 'login',
+		name: 'register',
 		data () {
 			return {
 				email: '',
-				password: ''
+				password: '',
+				passconfirm: '',
+				showErrors: ''
 			}
 		},
 		methods: {
-			submitLogin () {
-				axios.post('http://localhost:3005/v1/account/login',{
+			submitRegistration () {
+				axios.post('http://localhost:3005/v1/account/register',{
 					email: this.email,
 					password: this.password
 				})
 			  .then(response => {
 			  	if(response.status==200){
-			  		console.log(response);
-			  		this.$ls.set('token',response.data.token)
-			  		this.$ls.set('username',this.email)
 			    	this.$router.push('/')
 			    }
 			  })
@@ -75,9 +80,10 @@
 			  })
 			},
 			validateBeforeSubmit() {
+				this.showErrors = true;
 	      this.$validator.validateAll().then((result) => {
 	        if (result) {
-	          this.submitLogin()
+	          this.submitRegistration()
 	          return;
 	        }
 	      });

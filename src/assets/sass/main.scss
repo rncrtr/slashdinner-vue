@@ -1,1 +1,8 @@
-@import '~bulma/bulma'
+@import '~bulma/sass/utilities/_all';
+
+$button-hover-color: #0094FF;
+
+[v-cloak] > * { display:none }
+[v-cloak]::before { content: "loading…" }
+
+@import '~bulma/bulma';
