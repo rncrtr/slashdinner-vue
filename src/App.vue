@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <!-- the router outlet, where all matched components would ber viewed -->
-    <div class="navbar is-pulled-right" role="navigation" aria-label="main navigation">
+    <!-- the router outlet, where all matched components would be viewed -->
+    <div class="navbar is-pulled-right no-print" role="navigation" aria-label="main navigation">
         &nbsp;<a class="navbar-item button is-dark" href="/login" v-if="!isLoggedin">Login</a>
         &nbsp;<a class="navbar-item button is-dark" href="/register" v-if="!isLoggedin">Register</a>&nbsp;&nbsp;
     </div>
-    <span class="loggedin is-pulled-right" v-if="isLoggedin">
-        Welcome <strong>{{username}}</strong>&nbsp;&nbsp;&nbsp;<button class="button is-small is-info">Logout</button>
+    <span class="loggedin is-pulled-right no-print" v-if="isLoggedin==true">
+        Welcome <strong>{{username}}</strong>&nbsp;&nbsp;&nbsp;<button class="button is-small is-info" v-on:click="logout">Logout</button>
     </span>
     <router-view></router-view>
   </div>
@@ -24,15 +24,16 @@ export default {
   data () {
     return {
       isLoggedin: false,
-      username: ''
+      username: '',
+      token: ''
     }
   },
   created () {
-    console.log(this.$ls);
+    //console.log(this.$ls);
     if(this.$ls.get('username')){
-      var token = this.$ls.get('token');
+      this.token = this.$ls.get('token');
       axios.get('http://localhost:3005/v1/account/me',{
-        headers: {'Authorization': 'Bearer '+token}
+        headers: {'Authorization': 'Bearer '+this.token}
       })
       .then(response => {
         if(response.status==200){
@@ -43,6 +44,23 @@ export default {
       .catch(error => {
         console.log(error);
         this.$router.push('/login')
+      })
+    }
+  },
+  methods:{
+    logout (){
+      axios.get('http://localhost:3005/v1/account/logout',{
+        headers: {'Authorization': 'Bearer '+this.token}
+      })
+      .then(response => {
+        if(response.status==200){
+          this.isLoggedin = false
+          this.$router.push('/login')
+          this.$ls.remove('token')
+        }
+      })
+      .catch(error => {
+        console.log(error);
       })
     }
   }
@@ -57,5 +75,19 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 10px;
+}
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+@media screen
+{    
+    .no-screen, .no-screen *
+    {
+        display: none !important;
+    }
 }
 </style>
