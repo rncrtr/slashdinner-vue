@@ -125,7 +125,7 @@ export default {
   },
   methods:{
     init (){
-      axios.get('http://localhost:3005/v1/recipe')
+      axios.get('/v1/recipe')
       .then(response => {
         //console.log(response);
         this.recipes = response.data;
@@ -162,7 +162,7 @@ export default {
       },
       addRecipe (editId) {
         if(editId){
-          axios.put('http://localhost:3005/v1/recipe/'+editId,{
+          axios.put('/v1/recipe/'+editId,{
             title: this.recipeTitle,
             ingredients: this.recipeIngredients
           })
@@ -177,7 +177,7 @@ export default {
             console.log(error);
           });
         }else{
-          axios.post('http://localhost:3005/v1/recipe/add',{
+          axios.post('/v1/recipe/add',{
             title: this.recipeTitle,
             ingredients: this.recipeIngredients
           })
@@ -196,7 +196,7 @@ export default {
       deleteRecipe(deleteId) {
         var result = confirm("Are you sure you want to delete this recipe?")
         if(result){
-          axios.delete('http://localhost:3005/v1/recipe/'+deleteId)
+          axios.delete('/v1/recipe/'+deleteId)
           .then(response => {
             console.log('recipe updated');
             this.recipeTitle = '';
