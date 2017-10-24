@@ -58,7 +58,7 @@
 		},
 		methods: {
 			submitLogin () {
-				axios.post('http://localhost:3005/v1/account/login',{
+				axios.post('/v1/account/login',{
 					email: this.email,
 					password: this.password
 				})

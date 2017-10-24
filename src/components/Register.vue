@@ -66,7 +66,7 @@
 		},
 		methods: {
 			submitRegistration () {
-				axios.post('http://localhost:3005/v1/account/register',{
+				axios.post('/v1/account/register',{
 					email: this.email,
 					password: this.password
 				})
